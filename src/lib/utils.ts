@@ -20,11 +20,14 @@ export function getImageProxyUrl(): string | null {
     return localImageProxy.trim();
   }
 
-  // 使用服务器配置的代理 URL（默认启用）
+  // 使用服务器配置的代理 URL，如果为空则使用默认值
   const serverImageProxy = (window as any).RUNTIME_CONFIG?.IMAGE_PROXY;
-  return serverImageProxy && serverImageProxy.trim()
-    ? serverImageProxy.trim()
-    : null;
+  if (serverImageProxy && serverImageProxy.trim()) {
+    return serverImageProxy.trim();
+  }
+
+  // 默认使用内置的图片代理
+  return '/api/image-proxy?url=';
 }
 
 /**
