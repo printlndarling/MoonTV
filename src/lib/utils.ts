@@ -8,20 +8,19 @@ import Hls from 'hls.js';
 export function getImageProxyUrl(): string | null {
   if (typeof window === 'undefined') return null;
 
-  // 本地未开启图片代理，则不使用代理
+  // 检查是否显式禁用图片代理
   const enableImageProxy = localStorage.getItem('enableImageProxy');
-  if (enableImageProxy !== null) {
-    if (!JSON.parse(enableImageProxy) as boolean) {
-      return null;
-    }
+  if (enableImageProxy !== null && !JSON.parse(enableImageProxy)) {
+    return null;
   }
 
+  // 优先使用本地设置的代理 URL
   const localImageProxy = localStorage.getItem('imageProxyUrl');
-  if (localImageProxy != null) {
-    return localImageProxy.trim() ? localImageProxy.trim() : null;
+  if (localImageProxy != null && localImageProxy.trim()) {
+    return localImageProxy.trim();
   }
 
-  // 如果未设置，则使用全局对象
+  // 使用服务器配置的代理 URL（默认启用）
   const serverImageProxy = (window as any).RUNTIME_CONFIG?.IMAGE_PROXY;
   return serverImageProxy && serverImageProxy.trim()
     ? serverImageProxy.trim()
